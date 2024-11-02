@@ -1,8 +1,51 @@
 <?php
 include_once('dbconnection.php');
+session_start();
 
-$name = $_SESSION['Pass'];
+// Enable error reporting
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 
+$username = $_SESSION['name'];
+if (!isset($username)) {
+    header('location:log.php');
+    exit();
+}
+
+// Check if there is an active session for this user
+$check_active_session_sql = "SELECT id FROM user_logs WHERE user_id = ? AND logout_time IS NULL";
+$check_stmt = $con->prepare($check_active_session_sql);
+if ($check_stmt) {
+    $check_stmt->bind_param("s", $username);
+    $check_stmt->execute();
+    $check_stmt->store_result();
+    
+    if ($check_stmt->num_rows > 0) {
+        // User already has an active session, no need to insert a new one
+        $check_stmt->bind_result($active_log_id);
+        $check_stmt->fetch();
+        $_SESSION['log_id'] = $active_log_id; // Store the existing log ID in session
+    } else {
+        // Insert a new login record since no active session exists
+        $insert_sql = "INSERT INTO user_logs (user_id, login_time) VALUES (?, NOW())";
+        $insert_stmt = $con->prepare($insert_sql);
+        if ($insert_stmt) {
+            $insert_stmt->bind_param("s", $username);
+            $insert_stmt->execute();
+            $_SESSION['log_id'] = $con->insert_id; // Store the new log ID in session for logout
+            $insert_stmt->close();
+        } else {
+            die("Error preparing insert statement: " . $con->error);
+        }
+    }
+    $check_stmt->close();
+} else {
+    die("Error preparing check statement: " . $con->error);
+}
+
+// Close the database connection
+$con->close();
 ?>
 
 <!DOCTYPE html>
@@ -12,62 +55,11 @@ $name = $_SESSION['Pass'];
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="index_style.css">
     <script defer src="script.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>AgZone-Home</title>
-    <style>
-       .about-para p {
-
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-align: justify;
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-        }
-
-        .about-para {
-            width: 50%;
-            height: 100%;
-            position: relative;
-        }
-        .about{
-    display: flex;
-    justify-content: space-between;
-    height: 50%;
-    width: 100%;
-  
-}
-
-.about-agzone{
-    width: 100%;
-    height: 70vh;
-}
-
-        .cards {
-            display: flex;
-            width: 100%;
-            gap: 50px;
-            justify-content: center;
-            position: absolute;
-            bottom: 310px;
-
-        }
-
-        .content #para {
-            color: rgb(151, 151, 151);
-            margin: 10px;
-        }
-
-        .home {
-            width: 100vw;
-            height: 20vh;
-            position: relative;
-        }
-    </style>
+    
 </head>
 
 <body>
@@ -86,6 +78,8 @@ $name = $_SESSION['Pass'];
                 <ul id="nav-links">
                     <li><a href="index.php"><i class="fa fa-fw fa-home"></i>Home</a></li>
                     <li><a href="rent_machine.php"><i class="fa fa-bus" aria-hidden="true"></i>Rent machinery</a></li>
+                    <li><i class="fa fa-user" aria-hidden="true"></i> <em><b><?php echo $username ?></b></em>  </li>
+                    
 
 
                 </ul>
@@ -141,7 +135,7 @@ $name = $_SESSION['Pass'];
 
             </div>
             <div class="about-para">
-                <p>
+                <p style="top:100%;">
                     At <span>AgZone</span>,
                     We provide expert advice alongside a diverse range of rental farming machinery. Our clients are
                     welcome to visit our farm to test drive the machines, ensuring you make an informed decision before
