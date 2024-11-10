@@ -13,7 +13,7 @@ if (isset($_POST['submit'])) {
     $Password = $_POST['Password'];
 
     // Use prepared statements to avoid SQL injection
-    $stmt = $con->prepare("SELECT `Password` FROM `membership` WHERE UserName = ?");
+    $stmt = $con->prepare("SELECT `Password` FROM `users` WHERE UserName = ?");
     $stmt->bind_param("s", $UserName);
     $stmt->execute();
     $result = $stmt->get_result();

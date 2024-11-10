@@ -20,7 +20,7 @@ if ($check_stmt) {
     $check_stmt->bind_param("s", $username);
     $check_stmt->execute();
     $check_stmt->store_result();
-    
+
     if ($check_stmt->num_rows > 0) {
         // User already has an active session, no need to insert a new one
         $check_stmt->bind_result($active_log_id);
@@ -55,11 +55,70 @@ $con->close();
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="index_style.css">
     <script defer src="script.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="index_style.css">
     <title>AgZone-Home</title>
-    
+    <style>
+        .footer {
+            width: 100vw;
+            min-height: 15vh;
+            background-color: #036e3a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .footer p:hover {
+            cursor: pointer;
+        }
+
+        .left-side-footer p {
+            padding-left: 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .right-side-footer p {
+            padding-right: 30px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+
+        .right-side-footer a {
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .right-side-footer a:hover {
+            cursor: pointer;
+        }
+
+
+        @media(max-width:992px) {
+            .footer {
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .left-side-footer p {
+                font-size: 1rem;
+
+            }
+
+            .right-side-footer p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+
 </head>
 
 <body>
@@ -78,8 +137,10 @@ $con->close();
                 <ul id="nav-links">
                     <li><a href="index.php"><i class="fa fa-fw fa-home"></i>Home</a></li>
                     <li><a href="rent_machine.php"><i class="fa fa-bus" aria-hidden="true"></i>Rent machinery</a></li>
-                    <li><i class="fa fa-user" aria-hidden="true"></i> <em><b><?php echo $username ?></b></em>  </li>
-                    
+                    <li><a href="my_booking.php"><i class="fa fa-shopping-cart" aria-hidden="true"></i>Bookings</a></li>
+
+                    <li><i class="fa fa-user" aria-hidden="true"></i> <em><b><?php echo $username ?></b></em> </li>
+
 
 
                 </ul>
@@ -104,6 +165,8 @@ $con->close();
             <ul id="mobile_nav_links">
                 <li><a href="index.php"><i class="fa fa-fw fa-home"></i>Home</a></li>
                 <li><a href="rent_machine.php"><i class="fa fa-bus" aria-hidden="true"></i>Rent machinery</a></li>
+                <li><a href="my_booking.php"><i class="fa fa-shopping-cart" aria-hidden="true"></i>Bookings</a></li>
+                <li><i class="fa fa-user" aria-hidden="true"></i> <em><b><?php echo $username ?></b></em> </li>
             </ul>
             <a href="logout.php"><button id="mobile_login"><i class="fa fa-fw fa-user"></i>Logout</button></a>
             <div class="mobile_footer">
