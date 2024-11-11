@@ -32,7 +32,7 @@ if (isset($_POST['submit'])) {
                 $hashedPassword = password_hash($Cpassword, PASSWORD_DEFAULT);
 
                 // Insert into database
-                $stmt = $con->prepare("INSERT INTO `user`(`UserName`, `MobileNo`, `Email`, `Password`) VALUES (?, ?, ?, ?)");
+                $stmt = $con->prepare("INSERT INTO `users`(`UserName`, `MobileNo`, `Email`, `Password`) VALUES (?, ?, ?, ?)");
                 $stmt->bind_param("ssss", $UserName, $MobileNo, $Email, $hashedPassword);
 
                 if ($stmt->execute()) {

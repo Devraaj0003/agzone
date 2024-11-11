@@ -25,6 +25,18 @@ $totalBookings = $con->query("SELECT COUNT(*) as total FROM bookings")->fetch_as
 $totalRevenue = $con->query("SELECT SUM(total_cost) as revenue FROM history")->fetch_assoc()['revenue'];
 $totalUsers = $con->query("SELECT COUNT(*) as total FROM users")->fetch_assoc()['total'];
 
+if($totalRentals == null){
+    $totalRentals = 0;
+}
+if($totalBookings == null){
+    $totalBookings = 0;
+}
+if($totalRevenue == null){
+    $totalRevenue = 0;
+}
+if($totalUsers == null){
+    $totalUsers = 0;
+}
 $alert_message = '';
 $alert_type = "success";
 
@@ -512,7 +524,12 @@ if (isset($_GET['complete_id'])) {
                             <td><?php echo htmlspecialchars($userlog['id']); ?></td>
                             <td><?php echo htmlspecialchars($userlog['user_id']); ?></td>
                             <td><?php echo htmlspecialchars($userlog['login_time']); ?></td>
-                            <td><?php echo htmlspecialchars($userlog['logout_time']); ?></td>
+                            <td><?php if ($userlog['logout_time'] == null) {
+                                echo "Active";
+                            } else {
+                                echo htmlspecialchars($userlog['logout_time']);
+                            }
+                            ; ?></td>
 
                         </tr>
                     <?php endwhile; ?>

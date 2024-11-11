@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Insert booking into the database
         $insert_sql = "INSERT INTO bookings (user_id, item_id, item_name, price_per_day, days_rented, total_cost, payment_status, payment_method, rental_start_date, delivery_address)
                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+
         $stmt = $con->prepare($insert_sql);
         $stmt->bind_param("sississsss", $username, $item_id, $item_name, $price_per_day, $days, $total_cost, $payment_status, $payment_method, $rental_start_date, $delivery_address);
 
@@ -85,6 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -161,6 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </style>
 </head>
+
 <body>
 
     <div class="form-container">
@@ -182,38 +184,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="rental_start_date">Rental Start Date</label>
                     <input type="date" name="rental_start_date" id="rental_start_date" required>
                 </div>
+
                 <div class="form-group">
                     <label for="delivery_address">Delivery Address</label>
-                    <input type="text" name="delivery_address" id="delivery_address" required>
+                    <input type="text" name="delivery_address" id="delivery_address" required minlength="5" maxlength="100">
                 </div>
+
                 <div class="form-group">
                     <label for="card_number">Card Number</label>
-                    <input type="text" name="card_number" id="card_number" required>
+                    <input type="text" name="card_number" id="card_number" required pattern="\d{16}" maxlength="16"
+                        title="Enter a valid 16-digit card number">
                 </div>
+
                 <div class="form-group">
                     <label for="card_name">Cardholder Name</label>
-                    <input type="text" name="card_name" id="card_name" required>
+                    <input type="text" name="card_name" id="card_name" required minlength="2" maxlength="50">
                 </div>
+
                 <div class="form-group">
                     <label for="expiry_date">Expiry Date (MM/YY)</label>
-                    <input type="text" name="expiry_date" id="expiry_date" required>
+                    <input type="text" name="expiry_date" id="expiry_date" required pattern="(0[1-9]|1[0-2])\/\d{2}"
+                        maxlength="5" title="Enter expiry in MM/YY format">
                 </div>
+
                 <div class="form-group">
                     <label for="cvv">CVV</label>
-                    <input type="text" name="cvv" id="cvv" required>
+                    <input type="text" name="cvv" id="cvv" required pattern="\d{3}" maxlength="3"
+                        title="Enter a valid 3-digit CVV">
                 </div>
+
                 <input type="hidden" name="item_id" value="<?php echo $item_id; ?>">
                 <input type="hidden" name="days" value="<?php echo $days; ?>">
+
                 <div class="form-group">
                     <button type="submit" name="submit_payment">Submit Payment</button>
                 </div>
             </form>
+
         <?php else: ?>
             <p>No rental details available.</p>
         <?php endif; ?>
     </div>
 
 </body>
+
 </html>
 
 <?php
